@@ -1,209 +1,57 @@
 <!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>jQuery UI Sortable - Connect lists</title>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="css/main.css">
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@500&display=swap" rel="stylesheet">
     <script src="js/kanbanapi.js"></script>
-    <script>
-
-        function text_update([data1, data2, data3]) {
-            let text1 = [], text2 = [], text3 = []
-
-            if (text1.length !== data1.length){
-                text1.length = 0
-                $('#sortable1 li').each(
-                    function () {
-                        text1.push($(this).text());
-                    }
-                )
-            }
-
-            if (text2.length !== data2.length) {
-                text2.length = 0
-                $('#sortable2 li').each(
-                    function () {
-                        text2.push($(this).text());
-                    }
-                )
-            }
-
-            if (text3.length !== data3.length) {
-                text3.length = 0
-                $('#sortable3 li').each(
-                    function () {
-                        text3.push($(this).text())
-                    }
-                )
-            }
-
-            return [text1, text2, text3]
-
-        }
-
-        function get_task_ids(){
-            let data1 = $("#sortable1").sortable("toArray");
-            let data2 = $("#sortable2").sortable("toArray");
-            let data3 = $("#sortable3").sortable("toArray");
-            return [data1, data2, data3]
-        }
-
-        $(function () {
-
-            $("#sortable1, #sortable2, #sortable3").sortable({
-                connectWith: ".connectedSortable",
-                stop: (event) => {
-
-                    let data = get_task_ids()
-
-                    save_text(text_update(data))
-                    save_state(data)
-                }
-            }).disableSelection();
-
-            $("#sortable1_add, #sortable2_add, #sortable3_add").button({
-                disabled: false
-            });
-
-            $("#sortable1_add").click(function () {
-                const id = load_last_item_id() + 1;
-                $("#sortable1").append(`<li class=\"ui-state-default kanban_item\" id=\"${id}\">New Task</li>`);
-                save_last_item_id(id);
-            });
-
-            $("#sortable2_add").click(function () {
-                const id = load_last_item_id() + 1;
-                $("#sortable2").append(`<li class=\"ui-state-default kanban_item\" id=\"${id}\">New Task</li>`);
-                save_last_item_id(id);
-            });
-
-            $("#sortable3_add").click(function () {
-                const id = load_last_item_id() + 1;
-                $("#sortable3").append(`<li class=\"ui-state-default kanban_item\" id=\"${id}\">New Task</li>`);
-                save_last_item_id(id);
-            });
-
-            const state = load_state()
-            const texts = load_texts()
-
-            for (let i = 0; i < state.length; i++) {
-                for (let j = 0; j < state[i].length; j++) {
-                    $("#sortable" + (i+1)).append(`<li class=\"ui-state-default kanban_item\" id=\"${state[i][j]}\">${texts[i][j]}</li>`)
-                }
-            }
-
-            let edited_li = 0
-
-            $("li").dblclick(
-                function () {
-                    edited_li = $(this)
-                    $("#task_name").val(edited_li.text())
-                    $("#edit_modal").show()
-                }
-            )
-
-            $("#save_task_name").click(
-                function () {
-                    edited_li.text($("#task_name").val())
-                    save_text(text_update(get_task_ids()))
-                    $("#edit_modal").hide()
-                }
-            )
-
-            $("#cancel_task_name").click(
-                function () {
-                    $("#edit_modal").hide()
-                }
-            )
-
-        });
-    </script>
-</head>
-<body>
-
-<div class="container">
-
-    <!--<div class="popup_container" id="popup_container1">
-
-        <div class="popup" id="popup1">
-
-            <form action="" method="">
-                <p>Task text:</p>
-                <p><input type="text" id="task_name"></p>
-                <button id="save_task_name" class="save_button">Save and close</button>
-            </form>
-
-        </div>
-
-    </div>-->
-
-    <!-- The Modal -->
-    <div id="edit_modal" class="modal">
-
-        <!-- Modal content -->
+    <script src="js/main.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div id="edit_modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <span class="close">&times;</span>
-                <h2>Modal Header</h2>
-            </div>
-            <div class="modal-body">
-                <p>Task text:</p>
-                <label for="task_name">
-                    <input type="text" id="task_name">
-                </label>
-                <button id="save_task_name" class="save_button">Save</button>
-                <button id="cancel_task_name" class="cancel_button">Cancel</button>
-            </div>
+          <div class="modal-header">
+            <h2>Modal Header</h2>
+          </div>
+          <div class="modal-body">
+            <label for="task_name">
+              <input type="text" class="text" id="task_name">
+            </label>
+            <button id="save_task_name" class="save_button">Save</button>
+            <button id="cancel_task_name" class="cancel_button">Cancel</button>
+            <button id="delete_task_name" class="delete_button">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="kanban_board">
+        <div class="kanban_column">
+          <p class="kanban_column-title">Plans</p>
+          <ul id="sortable1" class="connectedSortable"></ul>
+          <button id="sortable1_add" class="kanban_add-item">Add new item</button>
         </div>
 
+        <div class="vl"></div>
+
+        <div class="kanban_column">
+          <p class="kanban_column-title">Working on</p>
+          <ul id="sortable2" class="connectedSortable"></ul>
+          <button id="sortable2_add" class="kanban_add-item">Add new item</button>
+        </div>
+
+        <div class="vl"></div>
+
+        <div class="kanban_column">
+          <p class="kanban_column-title">Done</p>
+          <ul id="sortable3" class="connectedSortable"></ul>
+          <button id="sortable3_add" class="kanban_add-item">Add new item</button>
+        </div>
+      </div>
     </div>
-
-    <div class="kanban_board">
-
-        <div class="kanban_column">
-            <p class="kanban_column-title">ТРУПЫ</p>
-            <ul id="sortable1" class="connectedSortable">
-                <!--        <li class="ui-state-default kanban_item">Task 1</li>
-                        <li class="ui-state-default kanban_item">Task 2</li>
-                        <li class="ui-state-default kanban_item">Task 3</li>
-                        <li class="ui-state-default kanban_item">Task 4</li>
-                        <li class="ui-state-default kanban_item">Task 5</li>-->
-            </ul>
-            <button id="sortable1_add" class="kanban_add-item">Add new item</button>
-        </div>
-
-        <div class="kanban_column">
-            <p class="kanban_column-title">НЕ</p>
-            <ul id="sortable2" class="connectedSortable">
-                <!--        <li class="ui-state-default kanban_item">Item 1</li>
-                        <li class="ui-state-default kanban_item">Item 2</li>
-                        <li class="ui-state-default kanban_item">Item 3</li>
-                        <li class="ui-state-default kanban_item">Item 4</li>
-                        <li class="ui-state-default kanban_item">Item 5</li>-->
-            </ul>
-            <button id="sortable2_add" class="kanban_add-item">Add new item</button>
-        </div>
-
-        <div class="kanban_column">
-            <p class="kanban_column-title">ВЗРЫВАЮТСЯ</p>
-            <ul id="sortable3" class="connectedSortable">
-                <!--        <li class="ui-state-default kanban_item">Fuck 1</li>
-                        <li class="ui-state-default kanban_item">Fuck 2</li>
-                        <li class="ui-state-default kanban_item">Fuck 3</li>
-                        <li class="ui-state-default kanban_item">Fuck 4</li>
-                        <li class="ui-state-default kanban_item">Fuck 5</li>-->
-            </ul>
-            <button id="sortable3_add" class="kanban_add-item">Add new item</button>
-        </div>
-
-    </div>
-
-</div>
-
-
-</body>
+  </body>
 </html>
