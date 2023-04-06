@@ -23,7 +23,7 @@ function text_update([data1, data2, data3]) {
         text3.length = 0
         $('#sortable3 li').each(
             function () {
-                text3.push($(this).text())
+                text3.push($(this).text());
             }
         )
     }
@@ -39,39 +39,47 @@ function get_task_ids(){
     return [data1, data2, data3]
 }
 
+function new_li(){
+    const id = load_last_item_id() + 1;
+    save_last_item_id(id);
+    return `<li class=\"ui-state-default kanban_item\" id=\"${id}\">New Task</li>`
+}
+
 $(function () {
 
     $("#sortable1, #sortable2, #sortable3").sortable({
         connectWith: ".connectedSortable",
         stop: (event) => {
-
             let data = get_task_ids()
-
             save_text(text_update(data))
             save_state(data)
         }
     }).disableSelection();
+
+    $("#sortable1, #sortable2, #sortable3").on("item_changed", function () {
+            let data = get_task_ids()
+            save_text(text_update(data))
+            save_state(data)
+        }
+    )
 
     $("#sortable1_add, #sortable2_add, #sortable3_add").button({
         disabled: false
     });
 
     $("#sortable1_add").click(function () {
-        const id = load_last_item_id() + 1;
-        $("#sortable1").append(`<li class=\"ui-state-default kanban_item\" id=\"${id}\">New Task</li>`);
-        save_last_item_id(id);
+        $("#sortable1").append(new_li());
+        $("#sortable1").trigger("item_changed")
     });
 
     $("#sortable2_add").click(function () {
-        const id = load_last_item_id() + 1;
-        $("#sortable2").append(`<li class=\"ui-state-default kanban_item\" id=\"${id}\">New Task</li>`);
-        save_last_item_id(id);
+        $("#sortable2").append(new_li())
+        $("#sortable2").trigger("item_changed")
     });
 
     $("#sortable3_add").click(function () {
-        const id = load_last_item_id() + 1;
-        $("#sortable3").append(`<li class=\"ui-state-default kanban_item\" id=\"${id}\">New Task</li>`);
-        save_last_item_id(id);
+        $("#sortable3").append(new_li())
+        $("#sortable3").trigger("item_changed")
     });
 
     const state = load_state()
@@ -85,25 +93,32 @@ $(function () {
 
     let edited_li = 0
 
-    $("li").dblclick(
-        function () {
-            edited_li = $(this)
-            $("#task_name").val(edited_li.text())
-            $("#edit_modal").show()
+    $("ul").on('dblclick', 'li', function () {
+            edited_li = $(this);
+            $("#task_name").val(edited_li.text());
+            $("#edit_modal").show();
         }
     )
 
     $("#save_task_name").click(
         function () {
-            edited_li.text($("#task_name").val())
-            save_text(text_update(get_task_ids()))
-            $("#edit_modal").hide()
+            edited_li.text($("#task_name").val());
+            save_text(text_update(get_task_ids()));
+            $("#edit_modal").hide();
         }
     )
 
     $("#cancel_task_name").click(
         function () {
-            $("#edit_modal").hide()
+            $("#edit_modal").hide();
+        }
+    )
+
+    $("#delete_task_name").click(
+        function () {
+            edited_li.remove()
+            $("#sortable1, #sortable2, #sortable3").trigger("item_changed")
+            $("#edit_modal").hide();
         }
     )
 
