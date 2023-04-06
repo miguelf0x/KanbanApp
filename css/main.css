@@ -1,0 +1,122 @@
+#sortable1, #sortable2, #sortable3 {
+    background-color: #00ff00;
+    list-style-type: none;
+    padding: 10px;
+    margin: 10px;
+}
+
+#sortable1 li, #sortable2 li, #sortable3 li {
+    margin: 0 5px 5px 5px;
+    padding: 5px;
+    font-size: 1.2em;
+    width: auto;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.kanban * {
+    font-family: sans-serif;
+}
+
+.kanban_board {
+    display: flex;
+    justify-content: center;
+    padding: 30px;
+    width: 90%;
+    max-width: 1360px;
+    background: #BBBBBB;
+    border-radius: 10px;
+}
+
+.kanban_item {
+    padding: 10px;
+    background-color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.kanban_column {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 40px;
+    list-style-type: none;
+    padding: 10px;
+    float: left;
+    margin: 0;
+    align-content: center;
+}
+
+.kanban_column-title {
+    position: relative;
+    align-content: center;
+    top: 0;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 30px;
+    color: white;
+    user-select: none;
+}
+
+.kanban_add-item {
+    margin-left: 5%;
+    width: 90%;
+    padding: 10px 0;
+    font-size: 16px;
+    color: white;
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.popup {
+    display: none;
+    position: relative;
+    z-index: 1000;
+    margin:0 25% 0 25%;
+    width:50%;
+}
+
+.popup_container {
+    background-color: aqua;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 80%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.modal-header {
+    padding: 2px 16px;
+    background-color: darkslateblue;
+    color: white;
+}
+
+.modal-body {
+    padding: 2px 16px;
+}
